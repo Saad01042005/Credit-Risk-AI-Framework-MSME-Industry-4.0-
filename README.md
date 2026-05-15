@@ -42,7 +42,7 @@ open index.html
 
 ## Live site
 
-[mohdsaad.github.io](https://mohdsaad.github.io) — hosted via GitHub Pages
+[view it here]([https://mohdsaad.github.io](https://saad01042005.github.io/Credit-Risk-AI-Framework-MSME-Industry-4.0-/)) — hosted via GitHub Pages
 
 ## Contact
 
