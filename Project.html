@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mohd Saad Choudhary · AI Product Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: rgba(255,255,255,0.07);
+    --accent: #7DF9C0;
+    --accent2: #C8B8FF;
+    --accent3: #FF8C69;
+    --text: #f0ede8;
+    --muted: #8885a0;
+    --serif: 'Instrument Serif', Georgia, serif;
+    --sans: 'Syne', sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  .cursor {
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease, width 0.2s, height 0.2s, background 0.2s;
+    transform: translate(-50%, -50%);
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(125,249,192,0.4);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.35s cubic-bezier(.25,.46,.45,.94), opacity 0.2s;
+    transform: translate(-50%, -50%);
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 1000; opacity: 0.6;
+  }
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(125,249,192,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(125,249,192,0.025) 1px, transparent 1px);
+    background-size: 80px 80px;
+    pointer-events: none;
+  }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 500;
+    padding: 1.4rem 3rem;
+    display: flex; align-items: center; justify-content: space-between;
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,15,0.7);
+  }
+  .nav-logo { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; }
+  .nav-links { display: flex; gap: 2.5rem; }
+  .nav-links a { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bg); background: var(--accent); padding: 0.5rem 1.2rem; border-radius: 2px; text-decoration: none; font-weight: 600; transition: opacity 0.2s; }
+  .nav-cta:hover { opacity: 0.85; }
+
+  .hero { min-height: 100vh; display: flex; align-items: center; padding: 8rem 3rem 5rem; position: relative; overflow: hidden; }
+  .hero-glow { position: absolute; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(125,249,192,0.08) 0%, transparent 70%); top: 50%; left: 55%; transform: translate(-50%,-50%); pointer-events: none; }
+  .hero-glow2 { position: absolute; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(200,184,255,0.06) 0%, transparent 70%); top: 20%; left: 20%; pointer-events: none; }
+  .hero-inner { max-width: 1100px; width: 100%; margin: 0 auto; position: relative; }
+
+  .hero-tag { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 2rem; opacity: 0; animation: fadeUp 0.6s 0.2s forwards; }
+  .hero-tag::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+
+  h1 { font-family: var(--serif); font-size: clamp(3rem, 7vw, 6rem); line-height: 1.05; font-weight: 400; margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.7s 0.35s forwards; }
+  h1 em { font-style: italic; color: var(--accent); display: block; }
+
+  .hero-desc { max-width: 520px; font-size: 1.05rem; line-height: 1.7; color: var(--muted); margin-bottom: 3rem; font-weight: 400; opacity: 0; animation: fadeUp 0.7s 0.5s forwards; }
+
+  .hero-actions { display: flex; gap: 1rem; align-items: center; opacity: 0; animation: fadeUp 0.7s 0.65s forwards; }
+  .btn-primary { background: var(--accent); color: var(--bg); padding: 0.85rem 2rem; border-radius: 2px; text-decoration: none; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; transition: transform 0.2s, box-shadow 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(125,249,192,0.25); }
+  .btn-secondary { color: var(--text); border: 1px solid var(--border); padding: 0.85rem 2rem; border-radius: 2px; text-decoration: none; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; transition: border-color 0.2s, color 0.2s; }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .hero-stats { position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 2rem; opacity: 0; animation: fadeLeft 0.8s 0.8s forwards; }
+  .stat-item { text-align: right; }
+  .stat-num { font-family: var(--mono); font-size: 2rem; color: var(--accent); font-weight: 500; line-height: 1; }
+  .stat-label { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.25rem; }
+  .stat-divider { width: 100%; height: 1px; background: var(--border); }
+
+  .scroll-hint { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.5rem; opacity: 0; animation: fadeUp 1s 1.2s forwards; }
+  .scroll-hint span { font-family: var(--mono); font-size: 0.65rem; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; }
+  .scroll-line { width: 1px; height: 40px; background: linear-gradient(var(--accent), transparent); animation: scrollPulse 2s infinite; }
+
+  section { padding: 7rem 3rem; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .section-label { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem; }
+  .section-label::after { content: ''; flex: 0 0 40px; height: 1px; background: var(--accent); }
+  h2 { font-family: var(--serif); font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; margin-bottom: 3.5rem; line-height: 1.15; }
+  h2 em { font-style: italic; color: var(--accent2); }
+
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+  .about-text p { font-size: 1rem; line-height: 1.8; color: var(--muted); margin-bottom: 1.2rem; }
+  .about-text p strong { color: var(--text); }
+  .pm-pillars { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .pillar { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 1.4rem; transition: border-color 0.2s, transform 0.2s; }
+  .pillar:hover { border-color: rgba(125,249,192,0.3); transform: translateY(-3px); }
+  .pillar-icon { font-size: 1.4rem; margin-bottom: 0.6rem; }
+  .pillar-title { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.3rem; }
+  .pillar-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+
+  .project-hero { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 2rem; position: relative; }
+  .project-header { background: linear-gradient(135deg, #0d1117 0%, #111820 50%, #0d1117 100%); padding: 3rem; position: relative; border-bottom: 1px solid var(--border); overflow: hidden; }
+  .project-header::before { content: 'EMSWOA-KS'; position: absolute; right: -1rem; top: 50%; transform: translateY(-50%); font-family: var(--mono); font-size: 7rem; color: rgba(125,249,192,0.04); font-weight: 800; white-space: nowrap; pointer-events: none; letter-spacing: -0.05em; }
+  .project-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .badge { font-family: var(--mono); font-size: 0.65rem; padding: 0.3rem 0.7rem; border-radius: 2px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .badge-green { background: rgba(125,249,192,0.12); color: var(--accent); border: 1px solid rgba(125,249,192,0.2); }
+  .badge-purple { background: rgba(200,184,255,0.1); color: var(--accent2); border: 1px solid rgba(200,184,255,0.2); }
+  .badge-orange { background: rgba(255,140,105,0.1); color: var(--accent3); border: 1px solid rgba(255,140,105,0.2); }
+  .badge-gray { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
+
+  .project-title-main { font-family: var(--serif); font-size: 1.9rem; font-weight: 400; line-height: 1.2; margin-bottom: 0.75rem; }
+  .project-subtitle { font-size: 0.88rem; color: var(--muted); line-height: 1.6; max-width: 600px; }
+  .project-author { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(125,249,192,0.2); }
+
+  .status-badge { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.8rem; background: rgba(200,184,255,0.1); border: 1px solid rgba(200,184,255,0.3); border-radius: 2px; font-family: var(--mono); font-size: 0.65rem; color: var(--accent2); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.75rem; }
+  .status-badge::before { content: '●'; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .project-body { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; }
+  .project-section { padding: 2rem 2.5rem; border-right: 1px solid var(--border); }
+  .project-section:last-child { border-right: none; }
+  .ps-label { font-family: var(--mono); font-size: 0.65rem; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+
+  .pipeline { display: flex; flex-direction: column; gap: 0.6rem; }
+  .pipeline-step { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 0.9rem; border-radius: 3px; font-size: 0.78rem; transition: background 0.2s; }
+  .pipeline-step:hover { background: rgba(255,255,255,0.03); }
+  .step-num { font-family: var(--mono); font-size: 0.65rem; color: var(--accent); min-width: 1.2rem; }
+  .step-name { font-weight: 600; color: var(--text); }
+  .step-detail { font-size: 0.7rem; color: var(--muted); margin-top: 0.1rem; }
+  .pipeline-arrow { text-align: center; color: var(--border); font-size: 0.75rem; padding: 0 0 0 2rem; }
+
+  .metrics-grid { display: flex; flex-direction: column; gap: 1rem; }
+  .metric-row { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid var(--border); }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-name { font-size: 0.8rem; color: var(--muted); }
+  .metric-val { font-family: var(--mono); font-size: 0.9rem; color: var(--accent); font-weight: 500; }
+  .metric-bar-wrap { width: 100%; height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; margin-top: 0.4rem; }
+  .metric-bar { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+
+  .feature-list { display: flex; flex-direction: column; gap: 0.6rem; }
+  .feat-card { display: flex; align-items: start; gap: 0.7rem; padding: 0.7rem; background: rgba(255,255,255,0.02); border-radius: 3px; border: 1px solid transparent; transition: border-color 0.2s; }
+  .feat-card:hover { border-color: var(--border); }
+  .feat-rank { font-family: var(--mono); font-size: 0.65rem; color: var(--accent); min-width: 1.5rem; padding-top: 0.1rem; }
+  .feat-name { font-size: 0.78rem; font-weight: 600; }
+  .feat-cat { font-size: 0.68rem; color: var(--muted); margin-top: 0.1rem; }
+  .feat-ks { font-family: var(--mono); font-size: 0.68rem; color: var(--accent2); margin-left: auto; flex-shrink: 0; padding-top: 0.15rem; }
+
+  .pm-lens { background: linear-gradient(135deg, rgba(125,249,192,0.04) 0%, rgba(200,184,255,0.03) 100%); border: 1px solid rgba(125,249,192,0.12); border-radius: 4px; padding: 2.5rem; margin-top: 2rem; }
+  .pm-lens-title { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+  .pm-lens-title::before { content: '◆'; font-size: 0.5rem; }
+  .pm-insights { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .insight { padding: 1.4rem; background: rgba(0,0,0,0.2); border-radius: 3px; border-left: 2px solid var(--accent2); }
+  .insight-q { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent2); margin-bottom: 0.5rem; }
+  .insight-a { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+  .insight-a strong { color: var(--text); }
+
+  .skills-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 4rem; align-items: start; }
+  .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .skill-group-title { font-family: var(--mono); font-size: 0.68rem; color: var(--accent); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem; grid-column: 1/-1; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+  .skill-chip { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; font-size: 0.8rem; transition: border-color 0.2s; }
+  .skill-chip:hover { border-color: rgba(125,249,192,0.3); }
+  .skill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .skill-dot.p { background: var(--accent2); }
+  .skill-dot.o { background: var(--accent3); }
+
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .tl-item { display: flex; gap: 1.5rem; padding-bottom: 2rem; position: relative; }
+  .tl-item::after { content: ''; position: absolute; left: 0.4rem; top: 1.2rem; width: 1px; height: calc(100% - 0.5rem); background: var(--border); }
+  .tl-item:last-child::after { display: none; }
+  .tl-dot { width: 0.9rem; height: 0.9rem; border-radius: 50%; border: 2px solid var(--accent); background: var(--bg); flex-shrink: 0; margin-top: 0.2rem; position: relative; z-index: 1; }
+  .tl-date { font-family: var(--mono); font-size: 0.65rem; color: var(--muted); margin-bottom: 0.2rem; }
+  .tl-title { font-size: 0.88rem; font-weight: 700; margin-bottom: 0.2rem; }
+  .tl-org { font-size: 0.78rem; color: var(--accent2); }
+
+  .philosophy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .philosophy-cell { background: var(--surface); padding: 2.5rem; transition: background 0.2s; }
+  .philosophy-cell:hover { background: var(--surface2); }
+  .phi-num { font-family: var(--mono); font-size: 3rem; color: rgba(125,249,192,0.15); font-weight: 800; line-height: 1; margin-bottom: 1rem; }
+  .phi-title { font-family: var(--serif); font-size: 1.2rem; margin-bottom: 0.75rem; font-weight: 400; }
+  .phi-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.7; }
+
+  .contact-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .contact-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+  .contact-headline { font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 400; line-height: 1.1; }
+  .contact-headline em { font-style: italic; color: var(--accent); }
+  .contact-links { display: flex; flex-direction: column; gap: 1.2rem; margin-top: 2rem; }
+  .contact-link { display: flex; align-items: center; gap: 1rem; text-decoration: none; color: var(--text); padding: 1.2rem 1.5rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 3px; transition: border-color 0.2s, transform 0.2s; font-size: 0.88rem; }
+  .contact-link:hover { border-color: var(--accent); transform: translateX(4px); }
+  .contact-link-icon { font-size: 1.1rem; }
+  .contact-link-label { flex: 1; }
+  .contact-link-arrow { color: var(--muted); transition: color 0.2s; }
+  .contact-link:hover .contact-link-arrow { color: var(--accent); }
+
+  footer { padding: 2rem 3rem; max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; font-family: var(--mono); font-size: 0.65rem; color: var(--muted); letter-spacing: 0.1em; }
+  footer a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  footer a:hover { color: var(--accent); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeLeft { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes scrollPulse { 0%, 100% { opacity: 1; transform: scaleY(1); } 50% { opacity: 0.3; transform: scaleY(0.5); } }
+
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 5rem 1.5rem; }
+    .hero { padding: 7rem 1.5rem 4rem; }
+    .hero-stats { position: static; transform: none; flex-direction: row; flex-wrap: wrap; margin-top: 3rem; gap: 1.5rem; }
+    .stat-item { text-align: left; }
+    .about-grid, .skills-layout, .pm-insights, .project-body { grid-template-columns: 1fr; }
+    .philosophy-grid { grid-template-columns: 1fr; }
+    .contact-inner { grid-template-columns: 1fr; }
+    .project-section { border-right: none; border-bottom: 1px solid var(--border); }
+    .project-section:last-child { border-bottom: none; }
+    h1 { font-size: 2.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <div class="nav-logo">MSC · AI PM</div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#research">Research</a>
+    <a href="#skills">Skills</a>
+    <a href="#philosophy">Philosophy</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <a href="mailto:mohd.saad.ug23@nsut.ac.in" class="nav-cta">Hire Me</a>
+</nav>
+
+<section class="hero" id="home">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-inner">
+    <div class="hero-tag">AI Product Manager · Researcher · Builder</div>
+    <h1>
+      Bridging algorithms<br>
+      <em>and product impact.</em>
+    </h1>
+    <p class="hero-desc">
+      I design AI systems that solve real problems — from novel metaheuristic optimisation for credit risk to building ML pipelines that scale. NSUT '27, IT Department.
+    </p>
+    <div class="hero-actions">
+      <a href="#research" class="btn-primary">View Research ↓</a>
+      <a href="#contact" class="btn-secondary">Let's Talk</a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">95.5%</div>
+        <div class="stat-label">Feature Reduction</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-num">88→4</div>
+        <div class="stat-label">Indicators Distilled</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-num">p&lt;0.001</div>
+        <div class="stat-label">Statistical Significance</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="section-inner">
+    <div class="section-label">About</div>
+    <h2>The <em>intersection</em><br>of AI and product.</h2>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>I'm <strong>Mohd Saad Choudhary</strong>, a final-year IT student at NSUT Delhi with a clear obsession: making complex AI useful. My research on the EMSWOA-KS framework demonstrates my ability to bridge deep technical work with strategic product impact.</p>
+        <p>As a future AI PM, I bring the rarest combination: I can read a confusion matrix <em>and</em> articulate why it matters to a credit officer. I understand algorithmic trade-offs well enough to define what "done" actually looks like for an ML feature.</p>
+        <p>My research spans metaheuristics, credit risk modelling, and Industry 4.0 data ecosystems — and I've shipped the full lifecycle: problem framing, methodology, experiments, validation, and narrative.</p>
+      </div>
+      <div class="pm-pillars reveal">
+        <div class="pillar">
+          <div class="pillar-icon">⚙️</div>
+          <div class="pillar-title">Technical Depth</div>
+          <div class="pillar-desc">Can architect ML pipelines, read academic papers critically, and evaluate algorithm trade-offs.</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">🎯</div>
+          <div class="pillar-title">Product Thinking</div>
+          <div class="pillar-desc">Frames problems around user needs, defines success metrics, and scopes experiments ruthlessly.</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">📊</div>
+          <div class="pillar-title">Data Literacy</div>
+          <div class="pillar-desc">Fluent in AUC, KS-statistics, Wilcoxon tests, and what they mean for a real lending decision.</div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon">🔗</div>
+          <div class="pillar-title">Cross-functional</div>
+          <div class="pillar-desc">Translates between ML engineers, domain experts, and business stakeholders without losing nuance.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="research" style="padding-top: 0;">
+  <div class="section-inner">
+    <div class="section-label">Featured Research</div>
+    <h2>EMSWOA-KS: <em>my flagship</em><br>AI project.</h2>
+
+    <div class="project-hero reveal">
+      <div class="project-header">
+        <div class="project-badges">
+          <span class="badge badge-purple">In Preparation</span>
+          <span class="badge badge-purple">Metaheuristics</span>
+          <span class="badge badge-orange">Credit Risk · FinTech</span>
+          <span class="badge badge-gray">NSUT Delhi</span>
+        </div>
+        <div class="project-title-main">A Novel Hybrid Metaheuristic Framework for<br>Credit Risk Feature Selection in MSMEs</div>
+        <div class="project-subtitle">Integrating KS-statistic fitness with dynamic multi-swarm whale optimisation — reducing 88 MSME credit indicators to just 4, while preserving predictive AUC across six benchmark classifiers and validating across 30 independent runs (p &lt; 0.001).</div>
+        <div class="project-author">
+          ✦ Equal First Authors: Mohd Saad Choudhary &amp; Naman Kumawat · Advisor: Dr. Mohit Sajwan
+        </div>
+        <div class="status-badge">In Preparation · Seeking Journal</div>
+      </div>
+
+      <div class="project-body">
+        <div class="project-section">
+          <div class="ps-label">Three-Phase Pipeline</div>
+          <div class="pipeline">
+            <div class="pipeline-step">
+              <div class="step-num">01</div>
+              <div>
+                <div class="step-name">KS Pre-Screening</div>
+                <div class="step-detail">88 → 29 features via Kolmogorov–Smirnov filter (p&lt;0.05, δ=0.10)</div>
+              </div>
+            </div>
+            <div class="pipeline-arrow">↓</div>
+            <div class="pipeline-step">
+              <div class="step-num">02</div>
+              <div>
+                <div class="step-name">EMSWOA-KS Selection</div>
+                <div class="step-detail">Dynamic multi-swarm WOA + OBL init + Elite Tuning. 29 → 4 features.</div>
+              </div>
+            </div>
+            <div class="pipeline-arrow">↓</div>
+            <div class="pipeline-step">
+              <div class="step-num">03</div>
+              <div>
+                <div class="step-name">Risk-Weighted Ensemble</div>
+                <div class="step-detail">Bayesian HPO (Optuna) across RF, GBDT, SVM, LR, KNN, XGBoost. λFN=3×.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-section">
+          <div class="ps-label">Key Results</div>
+          <div class="metrics-grid">
+            <div>
+              <div class="metric-row"><span class="metric-name">Feature Reduction</span><span class="metric-val">95.5%</span></div>
+              <div class="metric-bar-wrap"><div class="metric-bar" style="width:95.5%"></div></div>
+            </div>
+            <div>
+              <div class="metric-row"><span class="metric-name">Best AUC (RF)</span><span class="metric-val">0.7965</span></div>
+              <div class="metric-bar-wrap"><div class="metric-bar" style="width:79.65%"></div></div>
+            </div>
+            <div>
+              <div class="metric-row"><span class="metric-name">vs BWOA (Wilcoxon r)</span><span class="metric-val">0.765</span></div>
+              <div class="metric-bar-wrap"><div class="metric-bar" style="width:76.5%"></div></div>
+            </div>
+            <div>
+              <div class="metric-row"><span class="metric-name">ATR Gain (LR)</span><span class="metric-val">+53.6%</span></div>
+              <div class="metric-bar-wrap"><div class="metric-bar" style="width:53.6%"></div></div>
+            </div>
+            <div>
+              <div class="metric-row"><span class="metric-name">Statistical Significance</span><span class="metric-val">p&lt;0.001</span></div>
+              <div class="metric-bar-wrap"><div class="metric-bar" style="width:99%"></div></div>
+            </div>
+            <div>
+              <div class="metric-row"><span class="metric-name">Independent Runs</span><span class="metric-val">30</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-section">
+          <div class="ps-label">Selected Features (Top 4)</div>
+          <div class="feature-list">
+            <div class="feat-card">
+              <div class="feat-rank">#1</div>
+              <div class="feat-info">
+                <div class="feat-name">Establishment Duration</div>
+                <div class="feat-cat">Structural · Longevity Signal</div>
+              </div>
+              <div class="feat-ks">KS 0.434</div>
+            </div>
+            <div class="feat-card">
+              <div class="feat-rank">#2</div>
+              <div class="feat-info">
+                <div class="feat-name">t-3 Birth Insurance</div>
+                <div class="feat-cat">Behavioural · Social Insurance</div>
+              </div>
+              <div class="feat-ks">KS 0.356</div>
+            </div>
+            <div class="feat-card">
+              <div class="feat-rank">#3</div>
+              <div class="feat-info">
+                <div class="feat-name">t-1 Old-Age Insurance</div>
+                <div class="feat-cat">Behavioural · Payroll Regularity</div>
+              </div>
+              <div class="feat-ks">KS 0.283</div>
+            </div>
+            <div class="feat-card">
+              <div class="feat-rank">#4</div>
+              <div class="feat-info">
+                <div class="feat-name">CL_5years Credit Lines</div>
+                <div class="feat-cat">Credit History · 5-yr Horizon</div>
+              </div>
+              <div class="feat-ks">KS 0.281</div>
+            </div>
+          </div>
+          <div style="margin-top:1rem; font-size:0.72rem; color:var(--muted); font-family:var(--mono);">
+            Composite KS: 0.4673 · 1,707 enterprises
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pm-lens reveal">
+      <div class="pm-lens-title">The AI PM Lens on this Research</div>
+      <div class="pm-insights">
+        <div class="insight">
+          <div class="insight-q">Problem Framing</div>
+          <div class="insight-a">Identified the exact failure mode: <strong>fitness function mismatch</strong>. Raw error-rate doesn't work for imbalanced credit data. KS-statistic is threshold-independent — a decision that immediately de-risks deployment.</div>
+        </div>
+        <div class="insight">
+          <div class="insight-q">Stakeholder Impact</div>
+          <div class="insight-a">The 4-feature model means a credit analyst sees <strong>4 inputs, not 88</strong>. Explainability goes from impossible to trivial. Regulatory compliance becomes feasible. This is PM work disguised as research.</div>
+        </div>
+        <div class="insight">
+          <div class="insight-q">Shipping Discipline</div>
+          <div class="insight-a">Seven-component validation, ablation study, dual-threshold evaluation, and honest reporting of a null result (+TMGWO). <strong>No inflated claims.</strong> That's the discipline of someone who has to maintain a product post-launch.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="section-inner">
+    <div class="section-label">Skills & Background</div>
+    <h2>Built to <em>bridge</em><br>AI and product.</h2>
+    <div class="skills-layout">
+      <div class="skills-grid reveal">
+        <div class="skill-group-title">AI / ML</div>
+        <div class="skill-chip">Metaheuristics (WOA, PSO, GA) <div class="skill-dot"></div></div>
+        <div class="skill-chip">Feature Selection <div class="skill-dot"></div></div>
+        <div class="skill-chip">Ensemble Methods (XGB, RF, GBDT) <div class="skill-dot"></div></div>
+        <div class="skill-chip">Bayesian HPO (Optuna) <div class="skill-dot"></div></div>
+        <div class="skill-chip">Class Imbalance (SMOTE) <div class="skill-dot"></div></div>
+        <div class="skill-chip">Statistical Validation (Wilcoxon) <div class="skill-dot"></div></div>
+
+        <div class="skill-group-title">Product & PM</div>
+        <div class="skill-chip">Problem Framing <div class="skill-dot p"></div></div>
+        <div class="skill-chip">Metric Definition & OKRs <div class="skill-dot p"></div></div>
+        <div class="skill-chip">Technical Roadmapping <div class="skill-dot p"></div></div>
+        <div class="skill-chip">Experiment Design & A/B <div class="skill-dot p"></div></div>
+        <div class="skill-chip">Stakeholder Communication <div class="skill-dot p"></div></div>
+        <div class="skill-chip">Agile / Sprint Planning <div class="skill-dot p"></div></div>
+
+        <div class="skill-group-title">Engineering</div>
+        <div class="skill-chip">Python · NumPy · scikit-learn <div class="skill-dot o"></div></div>
+        <div class="skill-chip">Data Pipelines & CV <div class="skill-dot o"></div></div>
+        <div class="skill-chip">SQL & Data Wrangling <div class="skill-dot o"></div></div>
+        <div class="skill-chip">Git / GitHub <div class="skill-dot o"></div></div>
+      </div>
+
+      <div class="timeline reveal">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <div class="tl-date">2026</div>
+            <div class="tl-title">EMSWOA-KS — In Preparation</div>
+            <div class="tl-org">Seeking publication in peer-reviewed journal</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <div class="tl-date">2025–2026</div>
+            <div class="tl-title">Research · Credit AI</div>
+            <div class="tl-org">NSUT Delhi · IT Department</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-content">
+            <div class="tl-date">2023–Present</div>
+            <div class="tl-title">B.Tech Information Technology</div>
+            <div class="tl-org">Netaji Subhas University of Technology</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="philosophy">
+  <div class="section-inner">
+    <div class="section-label">Philosophy</div>
+    <h2>How I think about<br><em>AI products.</em></h2>
+    <div class="philosophy-grid reveal">
+      <div class="philosophy-cell">
+        <div class="phi-num">01</div>
+        <div class="phi-title">Fitness functions are product decisions.</div>
+        <div class="phi-desc">What you optimise is what you get. In EMSWOA-KS, switching from error-rate to KS-statistic wasn't a technical tweak — it was a product pivot. Every ML model has a hidden fitness function. The PM's job is to make it explicit and align it with real-world cost.</div>
+      </div>
+      <div class="philosophy-cell">
+        <div class="phi-num">02</div>
+        <div class="phi-title">Reduction is the feature, not the limitation.</div>
+        <div class="phi-desc">Going from 88 to 4 indicators is the product. Interpretability, speed, regulatory clearance, analyst trust — all downstream of simplicity. The best AI products are aggressive editors. More inputs is rarely better UX for humans or models.</div>
+      </div>
+      <div class="philosophy-cell">
+        <div class="phi-num">03</div>
+        <div class="phi-title">Honesty is a product moat.</div>
+        <div class="phi-desc">Our ablation study reported a null result honestly — the TMGWO mutation did nothing. That kind of disciplined reporting is rare, and it's what makes a system trustworthy in production. Overpromised AI products fail in deployment. Honest ones compound.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="contact-section">
+  <div class="contact-inner">
+    <div class="reveal">
+      <div class="section-label">Contact</div>
+      <div class="contact-headline">Let's build<br><em>something real.</em></div>
+      <p style="margin-top:1.5rem; color:var(--muted); font-size:0.9rem; line-height:1.7;">
+        I'm actively looking for AI PM internships and full-time roles where technical depth meets product ambition. If you're building AI products that matter — in FinTech, B2B SaaS, or applied research — let's talk.
+      </p>
+    </div>
+    <div class="contact-links reveal">
+      <a href="mailto:mohd.saad.ug23@nsut.ac.in" class="contact-link">
+        <span class="contact-link-icon">✉</span>
+        <span class="contact-link-label">
+          <strong>Email</strong><br>
+          <span style="font-size:0.78rem;color:var(--muted)">mohd.saad.ug23@nsut.ac.in</span>
+        </span>
+        <span class="contact-link-arrow">→</span>
+      </a>
+      <a href="https://github.com/" target="_blank" class="contact-link">
+        <span class="contact-link-icon">⌥</span>
+        <span class="contact-link-label">
+          <strong>GitHub</strong><br>
+          <span style="font-size:0.78rem;color:var(--muted)">See my code & projects</span>
+        </span>
+        <span class="contact-link-arrow">→</span>
+      </a>
+      <a href="https://linkedin.com/" target="_blank" class="contact-link">
+        <span class="contact-link-icon">◈</span>
+        <span class="contact-link-label">
+          <strong>LinkedIn</strong><br>
+          <span style="font-size:0.78rem;color:var(--muted)">Connect professionally</span>
+        </span>
+        <span class="contact-link-arrow">→</span>
+      </a>
+      <a href="#" class="contact-link">
+        <span class="contact-link-icon">↓</span>
+        <span class="contact-link-label">
+          <strong>Download CV / Resume</strong><br>
+          <span style="font-size:0.78rem;color:var(--muted)">PDF · Updated May 2026</span>
+        </span>
+        <span class="contact-link-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Mohd Saad Choudhary · NSUT Delhi</span>
+  <span>
+    Equal First Author ·
+    <a href="mailto:naman.kumawat.ug23@nsut.ac.in">Naman Kumawat</a>
+    ·
+    <a href="#home">↑ Back to top</a>
+  </span>
+</footer>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = -100, my = -100, rx = -100, ry = -100;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(2.5)';
+      cursor.style.background = 'var(--accent2)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+      cursor.style.background = 'var(--accent)';
+    });
+  });
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        e.target.style.transitionDelay = (i * 0.08) + 's';
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  const barObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.metric-bar').forEach(bar => {
+          const w = bar.style.width;
+          bar.style.width = '0';
+          setTimeout(() => {
+            bar.style.transition = 'width 1s cubic-bezier(.25,.46,.45,.94)';
+            bar.style.width = w;
+          }, 200);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.project-hero').forEach(el => barObserver.observe(el));
+
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+</body>
+</html>
